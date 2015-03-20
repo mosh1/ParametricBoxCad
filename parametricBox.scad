@@ -14,15 +14,16 @@ y_width=30;
 
 // in mm
 height=10;
-// height in mm
-lip_height=5;
-
 top_height = 10;
 
-snugfit=0.0;
 // Wall thickness in mm
 thickness=1.2; // [1:10]
+
+lip_height=5;
+lip_overlap_height = 5;
 lip_thickness=0.8;
+
+snugfit=0.0;
 
 // Corner roundover in mm (0=sharp corner)
 radius=5; // [0:50]
@@ -56,6 +57,8 @@ yadj=y_width-(corner_radius*2);
 
 // ---- The box
 box_height_total = height+lip_height;
+lip_overlap_cut_total = height - lip_overlap_height;
+
 if(do_box==1) translate([-((x_width/2+1)*do_lid),0,height/2]) difference() {
 
 union() {
@@ -73,10 +76,19 @@ translate([0,0,lip_height/2]) minkowski() // main body overlap
 }
 
 // Difference
+union() {
 translate([0,0,lip_height/2 + thickness]) minkowski() // inside area
 {
  cube([xadj-((thickness+lip_thickness+snugfit)),yadj-((thickness+lip_thickness+snugfit)),box_height_total],center=true);
  cylinder(r=corner_radius,h=box_height_total);
+}
+
+translate([0,0,lip_overlap_height/2 *-1 - thickness]) minkowski() // inside area
+{
+ cube([xadj-thickness,yadj-thickness, lip_overlap_cut_total],center=true);
+ cylinder(r=corner_radius,h=lip_overlap_cut_total);
+}
+
 }
 
 };
