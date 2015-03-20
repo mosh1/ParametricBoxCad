@@ -7,14 +7,14 @@
 /* [Main] */
 
 // in mm
-x_width=149.5;
+x_width=149;
 y_width=97;
 
 height=140;
 lid_height = 85;
 
 // Wall thickness in mm
-thickness=1.0; // [1:10]
+thickness=1.6; // [1:10]
 
 // Box lip parameters
 lip_height=5;
