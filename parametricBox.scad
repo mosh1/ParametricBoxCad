@@ -8,19 +8,17 @@
 
 // in mm
 x_width=30;
-
-// in mm
 y_width=30;
 
-// in mm
-height=10;
-top_height = 10;
+height=5;
+top_height = 6;
 
 // Wall thickness in mm
 thickness=1.2; // [1:10]
 
+// Box lip parameters
 lip_height=5;
-lip_overlap_height = 5;
+lip_overlap_height = 3;
 lip_thickness=0.8;
 
 snugfit=0.0;
@@ -83,7 +81,7 @@ translate([0,0,lip_height/2 + thickness]) minkowski() // inside area
  cylinder(r=corner_radius,h=box_height_total);
 }
 
-translate([0,0,lip_overlap_height/2 *-1 - thickness]) minkowski() // inside area
+translate([0,0,lip_overlap_height/2 *-1 + thickness]) minkowski() // cut out even more to make connector lip only go so deep
 {
  cube([xadj-thickness,yadj-thickness, lip_overlap_cut_total],center=true);
  cylinder(r=corner_radius,h=lip_overlap_cut_total);
