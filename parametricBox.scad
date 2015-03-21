@@ -1,36 +1,35 @@
-// http://www.thingiverse.com/thing:213934
 
-// ================ variables
-
-//CUSTOMIZER VARIABLES
-
-/* [Main] */
+// CUSTOMIZER VARIABLES
 
 // in mm
 x_width=149;
-y_width=97;
+y_width=87;
 
-height=140;
+bottom_height=140;
+// The height of both the bottom and lid is the total height of the box
 lid_height = 85;
 
 // Wall thickness in mm
-thickness=1.6; // [1:10]
+thickness=1.6;
 
-// Box lip parameters
-lip_height=5;
+// Height of lip above box top, used for the friction fit
+lip_height=8;
+// Height of the lip going below box top.
 lip_overlap_height = 2;
+// Wall thickness of the attachment lip
 lip_thickness=0.8;
 
+// Lip outer dimension offset. The larger the number the looser the friction fit.
 looseness_offset=0.25;
 
-// Corner roundover in mm (0=sharp corner)
-radius=5; // [0:50]
+// Corner radius in mm (0 = sharp corner)
+radius=5; 
 
-// Generate the box
-do_box=1; // [0:no,1:yes]
+// Generate the bottom
+generate_box=1; // [0:no,1:yes]
 
 // Generate a lid
-do_lid=1; // [0:no,1:yes]
+generate_lid=1; // [0:no,1:yes]
 
 
 //CUSTOMIZER VARIABLES END
@@ -45,16 +44,16 @@ yadj=y_width-(corner_radius*2);
 // =============== program
 
 // ---- The box
-box_height_total = height+lip_height;
-lip_overlap_cut_total = height - lip_overlap_height;
+box_height_total = bottom_height+lip_height;
+lip_overlap_cut_total = bottom_height - lip_overlap_height;
 
-if(do_box==1) translate([-((x_width/2+1)*do_lid),0,height/4]) difference() {
+if(generate_box==1) translate([-((x_width/2+1)*generate_lid),0,bottom_height/4]) difference() {
 
 union() {
 minkowski() // main body
 {
- cube([xadj,yadj,height/2],center=true);
- cylinder(r=corner_radius,h=height/2);
+ cube([xadj,yadj,bottom_height/2],center=true);
+ cylinder(r=corner_radius,h=bottom_height/2);
 }
 
 translate([0,0,lip_height/2]) minkowski() // inner body with lip
@@ -82,7 +81,7 @@ translate([0,0,lip_overlap_height/2 *-1 + thickness]) minkowski() // cut out eve
 };
 
 // ---- The lid
-if(do_lid==1) translate([(x_width/2+1)*do_box,0,lid_height/4]) {
+if(generate_lid==1) translate([(x_width/2+1)*generate_box,0,lid_height/4]) {
 
 difference() {
 minkowski() // main body
