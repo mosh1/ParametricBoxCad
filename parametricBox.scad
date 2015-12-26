@@ -75,7 +75,7 @@ if (generate_box == 1 ) {
 			}
 
 			// cut out even more to make connector lip only go so deep
-			translate([0,0,lip_overlap_height/2 *-1]) minkowski()
+			translate([0,0,lip_overlap_height/2 *-1 + thickness]) minkowski()
 			{
 			 cube([xadj-thickness*2,yadj-thickness*2, lip_overlap_cut_total/2],center=true);
 			 cylinder(r=corner_radius,h=lip_overlap_cut_total/2);
