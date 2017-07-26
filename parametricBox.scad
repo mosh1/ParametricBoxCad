@@ -13,8 +13,9 @@ thickness = 1.6;
 
 // Height of lip above box top, used for the friction fit.
 lip_height = 8;
+
 // Height of the lip going below and attached to bottom. Default works well.
-lip_overlap_height = 2;
+lip_overlap_height = 2.0;
 
 // Wall thickness of the attachment lip.
 lip_thickness = 0.8;
@@ -33,32 +34,39 @@ generate_lid = 1; // [0:no,1:yes]
 
 //CUSTOMIZER VARIABLES END
 
-x_width_outside = x_width + thickness*2 + lip_thickness*2;
-y_width_outside = y_width + thickness*2 + lip_thickness*2;
+// resolution
+$fn=100; 
+
+
+x_width_outside = x_width + thickness*2 + lip_thickness*2 + looseness_offset*2;
+y_width_outside = y_width + thickness*2 + lip_thickness*2 + looseness_offset*2;
 bottom_height_outside = bottom_height + thickness;
 lid_height_outside = lid_height + thickness;
 
 corner_radius = min(radius, x_width_outside/2, y_width_outside/2);
+
+// Adjust for cube size after minowski corner union is taken into account
 xadj = x_width_outside - (corner_radius*2);
 yadj = y_width_outside - (corner_radius*2);
 
 // ---- Generate bottom
 box_height_total = bottom_height_outside + lip_height;
-lip_overlap_cut_total = bottom_height_outside - lip_overlap_height;
+lip_overlap_cut_total = bottom_height - lip_overlap_height;
 
 if (generate_box == 1 ) {
-	translate([-((x_width_outside/2+1) * generate_lid), 0, bottom_height_outside/4]) difference() 
+	translate([-((x_width_outside/2+2) * generate_lid), 0, 0]) difference() 
 	{
 		union() 
 		{
-			// Outer body
-			minkowski()
-			{
-			 cube([xadj,yadj,bottom_height_outside/2],center=true);
-			 cylinder(r=corner_radius,h=bottom_height_outside/2);
-			}
-			// Inner body that forms lip
-			translate([0,0,lip_height/2]) minkowski()
+            // Outer body
+            translate([0,0,bottom_height_outside/4]) minkowski()
+            {
+                cube([xadj,yadj,bottom_height_outside/2],center=true);
+                cylinder(r=corner_radius,h=bottom_height_outside/2);
+            }
+			
+            // Inner body that forms lip
+			translate([0,0,box_height_total/4]) minkowski()
 			{
 			 cube([xadj-(thickness+looseness_offset)*2,yadj-(thickness+looseness_offset)*2,box_height_total/2],center=true);
 			 cylinder(r=corner_radius,h=box_height_total/2);
@@ -68,18 +76,20 @@ if (generate_box == 1 ) {
 		// Cut out inside
 		union() 
 		{
-			translate([0,0,lip_height/2 + thickness]) minkowski()
+			translate([0,0,(box_height_total)/4 + thickness]) minkowski()
 			{
-			 cube([xadj-((thickness+lip_thickness+looseness_offset)*2),yadj-((thickness+lip_thickness+looseness_offset)*2),box_height_total/2],center=true);
+			 cube([xadj-((thickness+lip_thickness+looseness_offset)*2),yadj-((thickness+lip_thickness+looseness_offset)*2), (box_height_total)/2],center=true);
 			 cylinder(r=corner_radius,h=box_height_total/2);
 			}
 
 			// cut out even more to make connector lip only go so deep
-			translate([0,0,lip_overlap_height/2 *-1 + thickness]) minkowski()
+			translate([0,0,((lip_overlap_cut_total)/4)  + thickness  ]) minkowski()
 			{
 			 cube([xadj-thickness*2,yadj-thickness*2, lip_overlap_cut_total/2],center=true);
 			 cylinder(r=corner_radius,h=lip_overlap_cut_total/2);
 			}
+            
+
 		}
 	};
 }
@@ -99,8 +109,8 @@ if (generate_lid==1) {
 			// Cut out inside
 			translate([0,0,thickness]) minkowski()
 			{
-			 cube([xadj-thickness*2,yadj-thickness*2,lid_height_outside/2],center=true);
-			 cylinder(r=corner_radius,h=lid_height_outside/2);
+			 cube([xadj-thickness*2,yadj-thickness*2,lid_height/2],center=true);
+			 cylinder(r=corner_radius,h=lid_height/2);
 			}
 		}
 	};
